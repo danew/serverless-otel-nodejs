@@ -1,0 +1,38 @@
+service: tracing-test
+
+plugins:
+  - serverless-plugin-include-dependencies
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  stage: dev
+  region: us-east-1
+  tracing:
+    lambda: true
+
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - xray:PutTraceSegments
+        - xray:PutTelemetryRecords
+        - s3:ListAllMyBuckets
+      Resource: "*"
+
+functions:
+  test:
+    handler: src/app.handler
+    events:
+      - http:
+          path: /
+          method: get
+          cors: true
+    layers:
+      - arn:aws:lambda:${self:provider.region}:901920570463:layer:aws-otel-nodejs-ver-0-19-0:1
+    environment:
+      AWS_LAMBDA_EXEC_WRAPPER: /opt/otel-handler
+      OTEL_LOG_LEVEL: DEBUG
+
+package:
+  excludeDevDependencies: false
+  individually: true

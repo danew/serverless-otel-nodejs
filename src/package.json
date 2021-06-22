@@ -1,0 +1,6 @@
+{
+  "name": "look-at-me-mum",
+  "description": "https://github.com/open-telemetry/opentelemetry-js/issues/2193",
+  "private": true,
+  "license": "ISC"
+}
